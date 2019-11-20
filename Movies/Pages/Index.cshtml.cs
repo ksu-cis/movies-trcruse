@@ -14,31 +14,40 @@ namespace Movies.Pages
 
         public List<Movie> Movies;
 
+        [BindProperty]
+        public string search { get; set; }
+
+        [BindProperty]
+        public List<string> mpaa { get; set; } = new List<string>();
+
+        [BindProperty]
+        public float? minIMDB { get; set; }
+
+        [BindProperty]
+        public float? maxIMDB { get; set; }
+
         /// <summary>
         /// Accessible list called Movies into our Database
         /// </summary>
         public void OnGet()
         {
-            Movies = movieDatabase.All;
+            Movies = MovieDatabase.All;
         }
 
-        public void OnPost(string search, List<string> rating)
+        public void OnPost(string search, List<string> mpaa, float? minIMDB, float? maxIMDB)
         {
-            if(search != null && rating.Count != 0)
+            Movies = MovieDatabase.All;
+            if (search !=null)
             {
-                Movies = movieDatabase.SearchAndFilter(search, rating);
+                Movies = MovieDatabase.Search(Movies, search);
             }
-            else if(rating.Count != 0)
+            if(mpaa.Count != 0)
             {
-                Movies = movieDatabase.Filter(rating);
+                Movies = movieDatabase.FilterByMPAA(Movies, mpaa);
             }
-            else if(search != null)
+            if(minIMDB != null)
             {
-                Movies = movieDatabase.Search(search);
-            }
-            else
-            {
-                Movies = movieDatabase.All;
+                Movies = MovieDatabase.FilterByMinIMDB(Movies, (float)minIMDB);
             }
            
         }
